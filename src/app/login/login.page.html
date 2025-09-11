@@ -8,11 +8,11 @@
 <ion-content>
   <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
     <ion-item>
-      <ion-label position="floating">Usuario</ion-label>
-      <ion-input type="text" formControlName="usuario" required></ion-input>
+  <ion-label position="floating">Email</ion-label>
+  <ion-input type="email" formControlName="email" required></ion-input>
     </ion-item>
-  <div *ngIf="loginForm.get('usuario')?.invalid && (loginForm.get('usuario')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
-      El usuario es obligatorio.
+  <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
+      El email es obligatorio y debe ser válido.
     </div>
     <ion-item>
       <ion-label position="floating">Password</ion-label>

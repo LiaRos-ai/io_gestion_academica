@@ -50,12 +50,12 @@ export class LoginPage implements OnInit {
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      usuario: ['usuario_demo', [Validators.required]],
+      email: ['demo@email.com', [Validators.required, Validators.email]],
       password: ['demo123', [Validators.required, Validators.minLength(6)]]
     });
-    this.mensajeBienvenida = 'Mensaje de bienvenida de prueba';
-    this.mensajeError = 'Mensaje de error de prueba';
-    this.submitted = true;
+  this.mensajeBienvenida = '';
+  this.mensajeError = '';
+  this.submitted = false;
   }
 
   ngOnInit() {}
@@ -63,13 +63,23 @@ export class LoginPage implements OnInit {
   onLogin() {
     this.submitted = true;
     if (this.loginForm.valid) {
-      const { usuario, password } = this.loginForm.value;
-      this.mensajeBienvenida = `¡Bienvenido, ${usuario}!`;
+      const { email, password } = this.loginForm.value;
+      this.mensajeBienvenida = `¡Bienvenido, ${email}!`;
       this.mensajeError = '';
-      console.log('Login attempt:', { usuario, password });
+      console.log('Login attempt:', { email, password });
     } else {
       this.mensajeBienvenida = '';
-      this.mensajeError = 'Usuario o contraseña inválidos. Por favor verifica los datos.';
+      if (this.loginForm.get('email')?.errors?.['required']) {
+        this.mensajeError = 'El email es obligatorio.';
+      } else if (this.loginForm.get('email')?.errors?.['email']) {
+        this.mensajeError = 'El email no es válido.';
+      } else if (this.loginForm.get('password')?.errors?.['required']) {
+        this.mensajeError = 'La contraseña es obligatoria.';
+      } else if (this.loginForm.get('password')?.errors?.['minlength']) {
+        this.mensajeError = 'La contraseña debe tener al menos 6 caracteres.';
+      } else {
+        this.mensajeError = 'Email o contraseña inválidos. Por favor verifica los datos.';
+      }
     }
   }
 }
