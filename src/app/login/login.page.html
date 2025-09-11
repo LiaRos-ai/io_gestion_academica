@@ -1,0 +1,32 @@
+  <!-- Mensajes condicionales solo una vez, después del formulario -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <ion-item>
+      <ion-label position="floating">Usuario</ion-label>
+      <ion-input type="text" formControlName="usuario" required></ion-input>
+    </ion-item>
+  <div *ngIf="loginForm.get('usuario')?.invalid && (loginForm.get('usuario')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
+      El usuario es obligatorio.
+    </div>
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="password" required></ion-input>
+    </ion-item>
+  <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
+      <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+      <span *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</span>
+    </div>
+  <ion-button expand="block" type="submit">Login</ion-button>
+  </form>
+  <div *ngIf="mensajeBienvenida" style="color: green; margin-top: 16px; text-align: center; font-weight: bold;">
+    {{ mensajeBienvenida }}
+  </div>
+  <div *ngIf="mensajeError && submitted" style="color: red; margin-top: 16px; text-align: center; font-weight: bold;">
+    {{ mensajeError }}
+  </div>
