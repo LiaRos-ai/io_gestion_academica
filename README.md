@@ -37,6 +37,8 @@ src/
    ```bash
    npm start
    ```
+   ng build
+   ng serve
 3. Accede a la app en [http://localhost:4200](http://localhost:4200)
 
 ## Requisitos
@@ -48,6 +50,13 @@ src/
 - Login funcional con validaciones y mensajes
 - Página de inicio redirigida al login
 - Listo para conectar con backend o ampliar módulos
+
+## Cambios recientes
+
+- Se agregaron reglas de seguridad recomendadas para Firestore en Firebase para permitir acceso a usuarios autenticados.
+- Se mejoró la gestión de mensajes de éxito y error en la UI para login y registro.
+- Se validó la creación automática de la colección de materias en Firestore si no existe.
+- Se revisó y ajustó la estructura de los componentes y servicios para cumplir con Angular standalone y buenas prácticas.
 
 ## Autor
 LiaRos-ai

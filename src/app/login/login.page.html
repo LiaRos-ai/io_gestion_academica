@@ -1,32 +1,204 @@
-  <!-- Mensajes condicionales solo una vez, después del formulario -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Login</ion-title>
   </ion-toolbar>
 </ion-header>
+<ion-content class="login-content">
+  <div class="login-container">
+    
+    <!-- Header -->
+    <div class="header-section">
+      <ion-icon name="school-outline" class="main-icon"></ion-icon>
+      <h1>Gestión Académica</h1>
+      <p class="subtitle">Tu compañero de estudios digital</p>
+    </div>
 
-<ion-content>
-  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-    <ion-item>
-  <ion-label position="floating">Email</ion-label>
-  <ion-input type="email" formControlName="email" required></ion-input>
-    </ion-item>
-  <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
-      El email es obligatorio y debe ser válido.
-    </div>
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" formControlName="password" required></ion-input>
-    </ion-item>
-  <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || submitted)" style="color: red; margin-bottom: 8px;">
-      <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
-      <span *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</span>
-    </div>
-  <ion-button expand="block" type="submit">Login</ion-button>
-  </form>
-  <div *ngIf="mensajeBienvenida" style="color: green; margin-top: 16px; text-align: center; font-weight: bold;">
-    {{ mensajeBienvenida }}
+    <!-- Mode Toggle -->
+    <ion-segment [(ngModel)]="isLoginMode" class="mode-segment">
+      <ion-segment-button [value]="true">
+        <ion-label>Ingresar</ion-label>
+      </ion-segment-button>
+      <ion-segment-button [value]="false">
+        <ion-label>Registrarse</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Login Form -->
+    <form *ngIf="isLoginMode" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+      
+      <!-- Email -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="email" 
+          type="email" 
+          placeholder="Correo electrónico"
+          [class.error]="emailError">
+        </ion-input>
+      </ion-item>
+      <div *ngIf="emailError" class="error-message">
+        <ion-text color="danger">
+          <small>Email válido requerido</small>
+        </ion-text>
+      </div>
+
+      <!-- Password -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="password" 
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Contraseña"
+          [class.error]="passwordError">
+        </ion-input>
+        <ion-button 
+          slot="end" 
+          fill="clear" 
+          (click)="togglePasswordVisibility()">
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div *ngIf="passwordError" class="error-message">
+        <ion-text color="danger">
+          <small>Contraseña mínimo 6 caracteres</small>
+        </ion-text>
+      </div>
+
+      <!-- Remember Me -->
+      <ion-item lines="none" class="checkbox-item">
+        <ion-checkbox formControlName="rememberMe" slot="start"></ion-checkbox>
+        <ion-label class="remember-label">Recordarme</ion-label>
+      </ion-item>
+
+      <!-- Login Button -->
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="!loginForm.valid"
+        class="auth-button">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Ingresar
+      </ion-button>
+
+      <!-- Forgot Password -->
+      <ion-button 
+        expand="block" 
+        fill="clear" 
+        (click)="forgotPassword()"
+        class="forgot-button">
+        ¿Olvidaste tu contraseña?
+      </ion-button>
+      
+    </form>
+
+    <!-- Register Form -->
+    <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+      
+      <!-- Email -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="email" 
+          type="email" 
+          placeholder="Correo electrónico"
+          [class.error]="regEmailError">
+        </ion-input>
+      </ion-item>
+      <div *ngIf="regEmailError" class="error-message">
+        <ion-text color="danger">
+          <small>Email válido requerido</small>
+        </ion-text>
+      </div>
+
+      <!-- Nombre -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="nombre" 
+          placeholder="Nombre completo">
+        </ion-input>
+      </ion-item>
+
+      <!-- Universidad -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="school-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="universidad" 
+          placeholder="Universidad">
+        </ion-input>
+      </ion-item>
+
+      <!-- Carrera -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="library-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="carrera" 
+          placeholder="Carrera">
+        </ion-input>
+      </ion-item>
+
+      <!-- Semestre -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="semestre" 
+          type="number" 
+          placeholder="Semestre">
+        </ion-input>
+      </ion-item>
+
+      <!-- Password -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="password" 
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Contraseña"
+          [class.error]="regPasswordError">
+        </ion-input>
+      </ion-item>
+
+      <!-- Confirm Password -->
+      <ion-item lines="full" class="form-item">
+        <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+        <ion-input 
+          formControlName="confirmPassword" 
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Confirmar contraseña"
+          [class.error]="confirmPasswordError || passwordMismatch">
+        </ion-input>
+        <ion-button 
+          slot="end" 
+          fill="clear" 
+          (click)="togglePasswordVisibility()">
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div *ngIf="passwordMismatch" class="error-message">
+        <ion-text color="danger">
+          <small>Las contraseñas no coinciden</small>
+        </ion-text>
+      </div>
+
+      <!-- Terms -->
+      <ion-item lines="none" class="checkbox-item">
+        <ion-checkbox formControlName="acceptTerms" slot="start"></ion-checkbox>
+        <ion-label class="terms-label">
+          Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+        </ion-label>
+      </ion-item>
+
+      <!-- Register Button -->
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="!registerForm.valid"
+        class="auth-button">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Crear Cuenta
+      </ion-button>
+      
+    </form>
+
   </div>
-  <div *ngIf="mensajeError && submitted" style="color: red; margin-top: 16px; text-align: center; font-weight: bold;">
-    {{ mensajeError }}
-  </div>
+</ion-content>

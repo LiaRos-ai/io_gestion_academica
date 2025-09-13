@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Materias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let materia of materias">
+      <ion-label>
+        <h2>{{ materia.nombre }}</h2>
+  <p>Docente: {{ materia.docente }}</p>
+        <p>Créditos: {{ materia.creditos }}</p>
+  <p>Periodo: {{ materia.periodo }}</p>
+      </ion-label>
+  <ion-button color="primary" [disabled]="!materia.id" (click)="actualizarMateria(materia.id!)">Actualizar</ion-button>
+  <ion-button color="danger" [disabled]="!materia.id" (click)="eliminarMateria(materia.id!)">Eliminar</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)="agregarMateria()">Agregar materia de ejemplo</ion-button>
+</ion-content>
