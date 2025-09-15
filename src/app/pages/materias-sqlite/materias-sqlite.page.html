@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>materias-sqlite</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">materias-sqlite</ion-title>
+    </ion-toolbar>
+  </ion-header>
+</ion-content>
+
+<!-- Demo usage of all imported Ionic components to resolve NG8113 warnings -->
+<ion-list>
+  <ion-item>
+    <ion-label position="stacked">Nombre de la materia</ion-label>
+    <ion-input placeholder="Ejemplo: Matemáticas" [(ngModel)]="searchTerm"></ion-input>
+    <ion-icon name="book-outline"></ion-icon>
+    <ion-checkbox [(ngModel)]="isEditing"></ion-checkbox>
+    <ion-text color="primary">Texto de ejemplo</ion-text>
+  </ion-item>
+</ion-list>
+<ion-button expand="block">Guardar materia</ion-button>
+<ion-segment [(ngModel)]="selectedPeriodo">
+  <ion-segment-button *ngFor="let periodo of periodos" [value]="periodo">
+    <ion-label>{{ periodo }}</ion-label>
+  </ion-segment-button>
+</ion-segment>

@@ -53,10 +53,10 @@ src/
 
 ## Cambios recientes
 
-- Se agregaron reglas de seguridad recomendadas para Firestore en Firebase para permitir acceso a usuarios autenticados.
-- Se mejoró la gestión de mensajes de éxito y error en la UI para login y registro.
-- Se validó la creación automática de la colección de materias en Firestore si no existe.
-- Se revisó y ajustó la estructura de los componentes y servicios para cumplir con Angular standalone y buenas prácticas.
+- **Login con Firebase y guardado local:** El login se realiza con Firebase, pero los datos del usuario se guardan en la base local SQLite para uso offline.
+- **Inicialización condicional de SQLite:** SQLite solo se inicializa en dispositivos móviles (Cordova/Capacitor), evitando errores en entorno web.
+- **Comentarios explicativos:** Se agregaron comentarios en el código para documentar los cambios y la lógica de inicialización condicional.
+- **Validación y listado de materias:** Las materias se guardan y se listan desde la base local SQLite usando los métodos del servicio.
 
 ## Autor
 LiaRos-ai

@@ -87,23 +87,23 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-RMXKIEDT.js";
+} from "./chunk-54UQWPLE.js";
 import {
-  shouldUseCloseWatcher
-} from "./chunk-XDEF2ZRY.js";
+  mdTransitionAnimation
+} from "./chunk-AMJEDFH6.js";
 import {
   GESTURE_CONTROLLER,
   createGesture
 } from "./chunk-C3MYGPQN.js";
 import {
+  shouldUseCloseWatcher
+} from "./chunk-XDEF2ZRY.js";
+import {
   NG_VALUE_ACCESSOR
-} from "./chunk-TDBVUQB3.js";
+} from "./chunk-NUGH3PJ4.js";
 import {
   iosTransitionAnimation
-} from "./chunk-QFY6YPQG.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-XXXJWE6H.js";
+} from "./chunk-OXNNKDAV.js";
 import {
   LIFECYCLE_DID_LEAVE,
   LIFECYCLE_WILL_LEAVE,
@@ -114,7 +114,7 @@ import {
   setPageHidden,
   transition,
   waitForMount
-} from "./chunk-JMCP4NIP.js";
+} from "./chunk-JAGFUEEB.js";
 import {
   Build,
   Fragment,
@@ -128,10 +128,6 @@ import {
   readTask,
   writeTask
 } from "./chunk-KTC7B3AI.js";
-import {
-  doc,
-  win
-} from "./chunk-QEE7QVES.js";
 import {
   addEventListener,
   assert,
@@ -153,6 +149,10 @@ import {
   transitionEndAsync
 } from "./chunk-VQZ2LWR5.js";
 import {
+  doc,
+  win
+} from "./chunk-QEE7QVES.js";
+import {
   config,
   printIonError,
   printIonWarning
@@ -160,14 +160,14 @@ import {
 import {
   ActivatedRoute,
   Router
-} from "./chunk-7LDYWQOH.js";
-import "./chunk-M5D3KPL7.js";
+} from "./chunk-HWHLBQVM.js";
+import "./chunk-TRQSUP7W.js";
 import {
   CommonModule,
   Location,
   NgIf,
   NgTemplateOutlet
-} from "./chunk-B44B4QUN.js";
+} from "./chunk-AGFHFIZA.js";
 import {
   APP_INITIALIZER,
   Attribute,
@@ -220,11 +220,11 @@ import {
   ɵɵrestoreView,
   ɵɵtemplate,
   ɵɵviewQuery
-} from "./chunk-I4ZMQYFF.js";
+} from "./chunk-XKLYBI7R.js";
 import {
   __decorate,
   fromEvent
-} from "./chunk-JIFDYC5C.js";
+} from "./chunk-OY5ONNYA.js";
 import {
   __async,
   __name,
@@ -5006,14 +5006,14 @@ var App = proxyCustomElement((_a12 = class extends H {
       rIC(() => __async(this, null, function* () {
         const isHybrid = isPlatform(window, "hybrid");
         if (!config.getBoolean("_testing")) {
-          import("./index7-XHTY7BLA.js").then((module) => module.startTapClick(config));
+          import("./index7-ASY4ZTY6.js").then((module) => module.startTapClick(config));
         }
         if (config.getBoolean("statusTap", isHybrid)) {
           import("./status-tap-3HB3QWME.js").then((module) => module.startStatusTap());
         }
         if (config.getBoolean("inputShims", needInputShims())) {
           const platform = isPlatform(window, "ios") ? "ios" : "android";
-          import("./input-shims-EPTSK4RJ.js").then((module) => module.startInputShims(config, platform));
+          import("./input-shims-SO2EQW4P.js").then((module) => module.startInputShims(config, platform));
         }
         const hardwareBackButtonModule = yield import("./hardware-back-button-YPC3OKAF.js");
         const supportsHardwareBackButtonEvents = isHybrid || shouldUseCloseWatcher();

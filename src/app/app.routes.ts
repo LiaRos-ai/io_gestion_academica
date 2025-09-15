@@ -17,5 +17,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },  {
+    path: 'materias-sqlite',
+    loadComponent: () => import('./pages/materias-sqlite/materias-sqlite.page').then( m => m.MateriasSqlitePage)
   },
+
 ];

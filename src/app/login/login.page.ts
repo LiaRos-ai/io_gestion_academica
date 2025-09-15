@@ -65,9 +65,10 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     // Verificar si ya está logueado
-    if (this.authService.isLoggedIn()) {
+    /*if (this.authService.isLoggedIn()) {
       this.router.navigate(['/tabs/materias']);
-    }
+    }*/
+   // No redirigir automáticamente, solo después del login
   }
 
   private initializeForms() {
@@ -106,6 +107,7 @@ export class LoginPage implements OnInit {
       try {
         await this.authService.login(email, password);
         await this.showToast('¡Bienvenido!', 'success');
+        await this.router.navigate(['/materias-sqlite']);
       } catch (error) {
         await this.showToast('Error al iniciar sesión', 'danger');
         console.error('Login error:', error);

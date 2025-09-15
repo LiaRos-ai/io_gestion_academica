@@ -3,6 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { RouteReuseStrategy } from '@angular/router';
 
+// SQLite Imports
+import { SQLite } from '@ionic-native/sqlite/ngx';
+
 // Firebase imports
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';

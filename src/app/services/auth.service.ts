@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SQLiteService } from './sqlite.service';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged, updateProfile, User as FirebaseUser } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
@@ -43,12 +44,13 @@ export class AuthService {
   private storageInitialized = false;
 
   constructor(
-  private auth: Auth,
-  private firestore: Firestore,
+    private auth: Auth,
+    private firestore: Firestore,
     private storage: Storage,
     private router: Router,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private sqliteService: SQLiteService
   ) {
     this.initStorage();
     this.initAuthState();
@@ -98,8 +100,23 @@ export class AuthService {
       await loading.dismiss();
 
       if (result.user) {
+        // Guardar usuario en SQLite si no existe
+        const usuario = {
+          email: result.user.email || '',
+          nombre: result.user.displayName || '',
+          firebase_uid: result.user.uid,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          sync_status: 'pending'
+        };
+        // Verificar si el usuario ya existe en SQLite
+        const usuarios = await this.sqliteService.getUsuarios();
+        const existe = usuarios.find(u => u.email === usuario.email);
+        if (!existe) {
+          await this.sqliteService.createUsuario(usuario);
+        }
         await this.showToast('¡Bienvenido de nuevo!', 'success');
-        await this.router.navigate(['/tabs/materias']);
+        await this.router.navigate(['/materias-sqlite']);
         return result;
       }
     } catch (error: any) {
@@ -116,7 +133,7 @@ export class AuthService {
    */
   async register(userData: {
     email: string;
-    password: string;
+    password: string; // Solo para compatibilidad, no se usará en SQLite
     nombre: string;
     universidad: string;
     carrera: string;
@@ -129,33 +146,25 @@ export class AuthService {
     await loading.present();
 
     try {
-      const result = await createUserWithEmailAndPassword(
-        this.auth,
-        userData.email,
-        userData.password
-      );
-      if (result.user) {
-        await updateProfile(result.user, { displayName: userData.nombre });
-        const userProfile: UserProfile = {
-          uid: result.user.uid,
-          email: userData.email,
-          nombre: userData.nombre,
-          universidad: userData.universidad,
-          carrera: userData.carrera,
-          semestre: userData.semestre,
-          fechaCreacion: new Date(),
-          ultimoAcceso: new Date()
-        };
-        const userDocRef = doc(this.firestore, `usuarios/${result.user.uid}`);
-        await setDoc(userDocRef, userProfile);
-        await loading.dismiss();
-        await this.showToast('¡Cuenta creada exitosamente!', 'success');
-        await this.router.navigate(['/tabs/materias']);
-        return result;
-      }
+      // Guardar usuario en SQLite
+      const usuario = {
+        email: userData.email,
+        nombre: userData.nombre,
+        firebase_uid: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sync_status: 'pending',
+        // Puedes agregar universidad, carrera, semestre si tu tabla usuarios lo permite
+      };
+      // @ts-ignore: SQLiteService debe estar disponible como propiedad
+      const createdUser = await this.sqliteService.createUsuario(usuario);
+      await loading.dismiss();
+      await this.showToast('¡Cuenta creada exitosamente en SQLite!', 'success');
+      await this.router.navigate(['/materias-sqlite']);
+      return createdUser;
     } catch (error: any) {
       await loading.dismiss();
-      await this.handleAuthError(error);
+      await this.showToast('Error al crear usuario en SQLite', 'danger');
       throw error;
     }
   }
