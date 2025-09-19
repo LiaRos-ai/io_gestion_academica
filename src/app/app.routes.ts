@@ -14,8 +14,20 @@ export const routes: Routes = [
     loadComponent: () => import('./materias/materias.page').then(m => m.MateriasPage),
   },
   {
+    path: 'tabs/notas',
+    loadComponent: () => import('./notas/notas.page').then(m => m.NotasPage),
+  },
+  {
+    path: 'tabs/horarios',
+    loadComponent: () => import('./horarios/horarios.page').then(m => m.HorariosPage),
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
+  },
+  {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard',
     pathMatch: 'full',
   },
 ];

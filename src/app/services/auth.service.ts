@@ -50,8 +50,43 @@ export class AuthService {
     private loadingController: LoadingController,
     private toastController: ToastController
   ) {
+    console.log('AuthService constructor called');
+    console.log('Firebase Auth instance:', this.auth);
+    console.log('Firestore instance:', this.firestore);
     this.initStorage();
     this.initAuthState();
+  }
+
+  /**
+   * Verifica la conectividad a internet con múltiples métodos
+   */
+  private async checkNetworkConnectivity(): Promise<boolean> {
+    try {
+      // Método 1: Usar fetch con timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+
+      const response = await fetch('https://www.google.com/favicon.ico', {
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      console.log('Network connectivity check passed');
+      return true;
+    } catch (error) {
+      console.error('Network connectivity check failed:', error);
+
+      // Método 2: Usar navigator.onLine como fallback
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        console.log('Navigator reports online, proceeding...');
+        return true;
+      }
+
+      return false;
+    }
   }
 
   private async initStorage() {
@@ -87,6 +122,15 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<any> {
+    console.log('Starting login process for:', email);
+
+    // Verificar conectividad antes de intentar login
+    const isConnected = await this.checkNetworkConnectivity();
+    if (!isConnected) {
+      await this.showToast('Sin conexión a internet. Verifica tu conexión e intenta nuevamente', 'danger');
+      throw new Error('No network connection');
+    }
+
     const loading = await this.loadingController.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent'
@@ -94,15 +138,27 @@ export class AuthService {
     await loading.present();
 
     try {
+      console.log('Attempting Firebase sign in...');
+      console.log('Auth instance:', this.auth);
+      console.log('App instance:', this.auth.app);
+
       const result = await signInWithEmailAndPassword(this.auth, email, password);
+      console.log('Firebase sign in successful');
+      console.log('User:', result.user.email);
+
       await loading.dismiss();
 
       if (result.user) {
         await this.showToast('¡Bienvenido de nuevo!', 'success');
-        await this.router.navigate(['/tabs/materias']);
+        await this.router.navigate(['/dashboard']);
         return result;
       }
     } catch (error: any) {
+      console.error('Login failed:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error details:', error);
+
       await loading.dismiss();
       await this.handleAuthError(error);
       throw error;
@@ -128,14 +184,28 @@ export class AuthService {
     });
     await loading.present();
 
+    console.log('Starting registration process...', userData);
+
+    // Verificar conectividad antes de intentar registro
+    const isConnected = await this.checkNetworkConnectivity();
+    if (!isConnected) {
+      await this.showToast('Sin conexión a internet. Verifica tu conexión e intenta nuevamente', 'danger');
+      throw new Error('No network connection');
+    }
+
     try {
+      console.log('Creating user with Firebase Auth...');
       const result = await createUserWithEmailAndPassword(
         this.auth,
         userData.email,
         userData.password
       );
+      console.log('Firebase Auth user created:', result.user.uid);
+
       if (result.user) {
+        console.log('Updating user profile...');
         await updateProfile(result.user, { displayName: userData.nombre });
+
         const userProfile: UserProfile = {
           uid: result.user.uid,
           email: userData.email,
@@ -146,14 +216,22 @@ export class AuthService {
           fechaCreacion: new Date(),
           ultimoAcceso: new Date()
         };
+
+        console.log('Saving user profile to Firestore...');
         const userDocRef = doc(this.firestore, `usuarios/${result.user.uid}`);
         await setDoc(userDocRef, userProfile);
+        console.log('User profile saved successfully');
+
         await loading.dismiss();
         await this.showToast('¡Cuenta creada exitosamente!', 'success');
-        await this.router.navigate(['/tabs/materias']);
+        console.log('Navigating to /dashboard...');
+        await this.router.navigate(['/dashboard']);
         return result;
       }
     } catch (error: any) {
+      console.error('Registration error:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
       await loading.dismiss();
       await this.handleAuthError(error);
       throw error;
@@ -179,16 +257,28 @@ export class AuthService {
   }
 
   async resetPassword(email: string): Promise<void> {
+    console.log('Starting password reset for:', email);
+
+    // Verificar conectividad antes de intentar reset
+    const isConnected = await this.checkNetworkConnectivity();
+    if (!isConnected) {
+      await this.showToast('Sin conexión a internet. Verifica tu conexión e intenta nuevamente', 'danger');
+      throw new Error('No network connection');
+    }
+
     const loading = await this.loadingController.create({
       message: 'Enviando email de recuperación...'
     });
     await loading.present();
 
     try {
+      console.log('Sending password reset email...');
       await sendPasswordResetEmail(this.auth, email);
+      console.log('Password reset email sent successfully');
       await loading.dismiss();
       await this.showToast('Email de recuperación enviado', 'success');
     } catch (error: any) {
+      console.error('Password reset failed:', error);
       await loading.dismiss();
       await this.handleAuthError(error);
       throw error;
@@ -224,6 +314,13 @@ export class AuthService {
   }
 
   private async handleAuthError(error: any): Promise<void> {
+    console.error('Auth error details:', {
+      code: error.code,
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
+
     // Variable para almacenar el mensaje de error
     let message = 'Ha ocurrido un error inesperado';
     // Evalúa el tipo de error recibido y asigna el mensaje correspondiente
@@ -244,10 +341,22 @@ export class AuthService {
         message = 'Email inválido';
         break;
       case 'auth/network-request-failed': // Error de red
-        message = 'Error de conexión. Verifica tu internet';
+        console.error('Network request failed. Checking connectivity...');
+        console.error('This might be due to Android emulator network issues');
+        console.error('Try: 1) Check emulator internet connection');
+        console.error('      2) Restart Android emulator');
+        console.error('      3) Check Firebase configuration');
+        message = 'Error de conexión. Verifica tu conexión a internet e intenta nuevamente. Si usas emulador, reinícialo.';
+        break;
+      case 'auth/too-many-requests': // Demasiadas solicitudes
+        message = 'Demasiados intentos. Intenta más tarde';
+        break;
+      case 'auth/user-disabled': // Usuario deshabilitado
+        message = 'Esta cuenta ha sido deshabilitada';
         break;
       default: // Otro error
         message = error.message || 'Error de autenticación';
+        console.error('Unhandled auth error:', error);
     }
     // Muestra el mensaje de error en un toast
     await this.showToast(message, 'danger');

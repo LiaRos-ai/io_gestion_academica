@@ -3,6 +3,19 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController, Platform, ToastController } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  eyeOutline,
+  eyeOffOutline,
+  schoolOutline,
+  mailOutline,
+  lockClosedOutline,
+  logInOutline,
+  personOutline,
+  libraryOutline,
+  calendarOutline,
+  personAddOutline
+} from 'ionicons/icons';
 
 import {
   IonContent,
@@ -60,17 +73,37 @@ export class LoginPage implements OnInit {
     private platform: Platform,
     private toastController: ToastController
   ) {
+    addIcons({
+      eyeOutline,
+      eyeOffOutline,
+      schoolOutline,
+      mailOutline,
+      lockClosedOutline,
+      logInOutline,
+      personOutline,
+      libraryOutline,
+      calendarOutline,
+      personAddOutline
+    });
     this.initializeForms();
   }
 
   ngOnInit() {
+    console.log('LoginPage ngOnInit called');
+    console.log('isLoginMode:', this.isLoginMode);
+    console.log('loginForm valid:', this.loginForm?.valid);
+    console.log('registerForm valid:', this.registerForm?.valid);
+
     // Verificar si ya está logueado
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/tabs/materias']);
+      console.log('User is already logged in, navigating to /dashboard');
+      this.router.navigate(['/dashboard']);
     }
   }
 
   private initializeForms() {
+    console.log('Initializing forms...');
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -87,6 +120,11 @@ export class LoginPage implements OnInit {
       semestre: ['', [Validators.required, Validators.min(1), Validators.max(12)]],
       acceptTerms: [false, [Validators.requiredTrue]]
     }, { validators: this.passwordMatchValidator });
+
+    console.log('Login form created:', this.loginForm);
+    console.log('Register form created:', this.registerForm);
+    console.log('Login form valid initially:', this.loginForm.valid);
+    console.log('Register form valid initially:', this.registerForm.valid);
   }
 
   // Validador personalizado para contraseñas
@@ -107,7 +145,7 @@ export class LoginPage implements OnInit {
         await this.authService.login(email, password);
         await this.showToast('¡Bienvenido!', 'success');
       } catch (error) {
-        await this.showToast('Error al iniciar sesión', 'danger');
+        // Error is already handled by AuthService.handleAuthError()
         console.error('Login error:', error);
       }
     } else {
@@ -127,20 +165,30 @@ export class LoginPage implements OnInit {
   }
 
   async onRegister() {
+    console.log('onRegister called');
+    console.log('Form valid:', this.registerForm.valid);
+    console.log('Form value:', this.registerForm.value);
+    console.log('Form errors:', this.registerForm.errors);
+
     if (this.registerForm.valid) {
       const formData = this.registerForm.value;
       delete formData.confirmPassword; // No enviar confirmPassword
       delete formData.acceptTerms; // No enviar acceptTerms
+      console.log('Form data to send:', formData);
+
       try {
+        console.log('Calling authService.register...');
         await this.authService.register(formData);
+        console.log('Registration successful');
         this.registerForm.reset();
         await this.showToast('¡Registro exitoso!', 'success');
         this.isLoginMode = true; // Cambia a modo login
       } catch (error) {
+        console.error('Register error in component:', error);
         await this.showToast('Error al registrar usuario', 'danger');
-        console.error('Register error:', error);
       }
     } else {
+      console.log('Form is invalid, marking fields as touched');
       this.markFormGroupTouched(this.registerForm);
       await this.showToast('Verifica los datos del registro', 'danger');
     }
@@ -204,32 +252,44 @@ export class LoginPage implements OnInit {
   // Getters para validación en template
   get emailError() {
     const email = this.loginForm.get('email');
-    return email?.invalid && email?.touched;
+    const hasError = email?.invalid && email?.touched;
+    console.log('emailError:', hasError, 'invalid:', email?.invalid, 'touched:', email?.touched, 'value:', email?.value);
+    return hasError;
   }
 
   get passwordError() {
     const password = this.loginForm.get('password');
-    return password?.invalid && password?.touched;
+    const hasError = password?.invalid && password?.touched;
+    console.log('passwordError:', hasError, 'invalid:', password?.invalid, 'touched:', password?.touched, 'value:', password?.value);
+    return hasError;
   }
 
   // Getters para registro
   get regEmailError() {
     const email = this.registerForm.get('email');
-    return email?.invalid && email?.touched;
+    const hasError = email?.invalid && email?.touched;
+    console.log('regEmailError:', hasError, 'invalid:', email?.invalid, 'touched:', email?.touched, 'value:', email?.value);
+    return hasError;
   }
 
   get regPasswordError() {
     const password = this.registerForm.get('password');
-    return password?.invalid && password?.touched;
+    const hasError = password?.invalid && password?.touched;
+    console.log('regPasswordError:', hasError, 'invalid:', password?.invalid, 'touched:', password?.touched, 'value:', password?.value);
+    return hasError;
   }
 
   get confirmPasswordError() {
-    return this.registerForm.get('confirmPassword')?.invalid && 
-           this.registerForm.get('confirmPassword')?.touched;
+    const confirmPassword = this.registerForm.get('confirmPassword');
+    const hasError = confirmPassword?.invalid && confirmPassword?.touched;
+    console.log('confirmPasswordError:', hasError, 'invalid:', confirmPassword?.invalid, 'touched:', confirmPassword?.touched, 'value:', confirmPassword?.value);
+    return hasError;
   }
 
   get passwordMismatch() {
-    return this.registerForm.hasError('passwordMismatch') && 
+    const hasMismatch = this.registerForm.hasError('passwordMismatch') &&
            this.registerForm.get('confirmPassword')?.touched;
+    console.log('passwordMismatch:', hasMismatch, 'form has error:', this.registerForm.hasError('passwordMismatch'));
+    return hasMismatch;
   }
 }

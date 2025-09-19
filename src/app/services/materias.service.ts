@@ -1,18 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
-
-export interface Materia {
-  id?: string;
-  codigo: string;
-  nombre: string;
-  creditos: number;
-  docente: string;
-  periodo: string;
-  color?: string;
-  usuarioId?: string;
-  fechaCreacion?: Date;
-  activa?: boolean;
-}
+import { Materia } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +15,21 @@ export class MateriasService {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Materia }));
   }
 
-  async addMateria(materia: Materia): Promise<void> {
-    await addDoc(this.materiasCollection, materia);
+  async getMateriasByUser(userId: string): Promise<Materia[]> {
+    const snapshot = await getDocs(this.materiasCollection);
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() as Materia }))
+      .filter(materia => materia.usuarioId === userId);
+  }
+
+  async addMateria(materia: Omit<Materia, 'id' | 'fechaCreacion'>): Promise<string> {
+    const newMateria = {
+      ...materia,
+      fechaCreacion: new Date(),
+      activa: true
+    };
+    const docRef = await addDoc(this.materiasCollection, newMateria);
+    return docRef.id;
   }
 
   async updateMateria(id: string, materia: Partial<Materia>): Promise<void> {
