@@ -1,9 +1,16 @@
 # io_gestion_academica
 Proyecto ionic de gestion academica
 
-# Gestión Académica
+# Gestión Académica - Aplicación Híbrida con SQLite
 
-Este proyecto es una aplicación móvil desarrollada con Ionic y Angular para la gestión académica. Incluye un sistema de login básico, validaciones de formulario y navegación entre páginas.
+Este proyecto es una aplicación móvil híbrida desarrollada con **Ionic + Angular + Capacitor** para la gestión académica completa. Incluye:
+
+- ✅ **Autenticación Firebase** para usuarios
+- ✅ **Base de datos SQLite local** para almacenamiento offline
+- ✅ **CRUD completo** para Materias, Notas y Horarios
+- ✅ **Interfaz moderna** con Ionic components
+- ✅ **Navegación intuitiva** entre secciones
+- ✅ **Sincronización automática** de base de datos
 
 ## Características principales
 - Login con validación de usuario y contraseña
@@ -28,6 +35,34 @@ src/
   theme/
 ```
 
+## 🏗️ Arquitectura de la Aplicación
+
+### Tecnologías Principales
+- **Frontend**: Angular 20 + Ionic 8 + TypeScript
+- **Backend**: Firebase Auth + SQLite Local
+- **Plataforma**: Capacitor (iOS/Android/Web)
+- **Base de Datos**: SQLite con Capacitor Community Plugin
+
+### Estructura de Datos Local
+```sql
+-- Tablas principales en SQLite
+usuarios (id, email, nombre, universidad, carrera, semestre, fechaCreacion, ultimoAcceso)
+materias (id, codigo, nombre, creditos, docente, periodo, color, usuarioId, fechaCreacion, activa)
+notas (id, materiaId, usuarioId, tipo, descripcion, calificacion, fecha, fechaCreacion)
+horarios (id, materiaId, usuarioId, diaSemana, horaInicio, horaFin, aula, fechaCreacion)
+```
+
+### Patrón de Arquitectura
+```
+Firebase Auth → Autenticación de usuarios
+     ↓
+Capacitor SQLite → Almacenamiento local offline
+     ↓
+Ionic Services → Lógica de negocio
+     ↓
+Ionic Components → Interfaz de usuario
+```
+
 ## Instalación y ejecución
 
 ### Para Desarrollo Web
@@ -42,6 +77,26 @@ src/
     ng serve
     ```
 3. Accede a la app en [http://localhost:4200](http://localhost:4200)
+
+### Para Desarrollo Móvil (Android/iOS)
+1. Configurar el proyecto para móviles:
+    ```bash
+    # Instalar dependencias
+    npm install
+
+    # Sincronizar con plataformas móviles
+    npm run android:sync  # Para Android
+    npx cap add ios      # Para iOS (opcional)
+    ```
+
+2. Ejecutar en emulador/dispositivo:
+    ```bash
+    # Android
+    npm run android:run
+
+    # iOS (si está configurado)
+    npx cap run ios
+    ```
 
 ### Para Android (Emulador/Dispositivo)
 1. Configurar el proyecto para Android:
@@ -110,6 +165,52 @@ adb logcat | grep "gestion-academica"
 - Node.js y npm
 - Angular CLI
 - Ionic CLI
+
+## Instalación de Plugins Necesarios
+
+### Plugins para Firebase
+
+Para instalar los plugins necesarios para Firebase Authentication:
+
+```bash
+npm install firebase @angular/fire
+```
+
+Para actualizar los plugins de Firebase:
+
+```bash
+npm update firebase @angular/fire
+```
+
+### Plugins para SQLite
+
+Para instalar los plugins necesarios para SQLite local:
+
+```bash
+npm install @capacitor-community/sqlite jeep-sqlite
+```
+
+Para actualizar los plugins de SQLite:
+
+```bash
+npm update @capacitor-community/sqlite jeep-sqlite
+```
+
+### Sincronización con Capacitor
+
+Después de instalar o actualizar plugins, sincroniza con las plataformas móviles:
+
+```bash
+npx cap sync
+```
+
+O específicamente para Android:
+
+```bash
+npx cap sync android
+```
+
+Esto asegura que los plugins estén disponibles en las plataformas nativas.
 
 ## Estado actual
 - Login funcional con validaciones y mensajes
@@ -296,7 +397,6 @@ src/app/
 
 - **Archivos Creados**: 6 nuevos archivos (3 servicios, 3 páginas)
 - **Archivos Modificados**: 8 archivos existentes
-- **Líneas de Código**: ~1500 líneas nuevas
 - **Componentes**: 15+ componentes Ionic utilizados
 - **Rutas**: 5 rutas principales implementadas
 - **Colecciones Firestore**: 4 colecciones con relaciones
@@ -321,6 +421,164 @@ La aplicación de gestión académica es ahora un sistema completo y funcional q
 6. **Acceder desde cualquier página** al dashboard principal
 
 **¡La aplicación está completamente lista para producción y uso diario por estudiantes!**
+
+## 💾 **SQLite Local - Funcionalidades Avanzadas**
+
+### **Ventajas de SQLite en Aplicación Híbrida**
+- ✅ **Offline First**: Funciona completamente sin conexión a internet
+- ✅ **Rendimiento Ultra-Rápido**: Consultas locales instantáneas
+- ✅ **Sincronización Automática**: Datos disponibles inmediatamente
+- ✅ **Seguridad Total**: Datos almacenados localmente en el dispositivo
+- ✅ **Portabilidad**: Base de datos incluida en la aplicación
+
+### **Inicialización Automática de Base de Datos**
+```typescript
+// Se ejecuta automáticamente al iniciar la app
+async ngOnInit() {
+  if (Capacitor.getPlatform() !== 'web') {
+    await this.databaseService.initializeDatabase();
+    console.log('✅ Base de datos SQLite inicializada');
+  }
+}
+```
+
+### **Estructura de Tablas SQLite**
+```sql
+-- Tablas principales en SQLite local
+CREATE TABLE usuarios (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  nombre TEXT,
+  universidad TEXT,
+  carrera TEXT,
+  semestre INTEGER,
+  fechaCreacion TEXT,
+  ultimoAcceso TEXT
+);
+
+CREATE TABLE materias (
+  id TEXT PRIMARY KEY,
+  codigo TEXT UNIQUE NOT NULL,
+  nombre TEXT NOT NULL,
+  creditos INTEGER NOT NULL,
+  docente TEXT NOT NULL,
+  periodo TEXT NOT NULL,
+  color TEXT,
+  usuarioId TEXT NOT NULL,
+  fechaCreacion TEXT,
+  activa INTEGER DEFAULT 1,
+  FOREIGN KEY (usuarioId) REFERENCES usuarios (id)
+);
+
+CREATE TABLE notas (
+  id TEXT PRIMARY KEY,
+  materiaId TEXT NOT NULL,
+  usuarioId TEXT NOT NULL,
+  tipo TEXT NOT NULL,
+  descripcion TEXT NOT NULL,
+  calificacion REAL NOT NULL,
+  fecha TEXT NOT NULL,
+  fechaCreacion TEXT,
+  FOREIGN KEY (materiaId) REFERENCES materias (id) ON DELETE CASCADE,
+  FOREIGN KEY (usuarioId) REFERENCES usuarios (id)
+);
+
+CREATE TABLE horarios (
+  id TEXT PRIMARY KEY,
+  materiaId TEXT NOT NULL,
+  usuarioId TEXT NOT NULL,
+  diaSemana TEXT NOT NULL,
+  horaInicio TEXT NOT NULL,
+  horaFin TEXT NOT NULL,
+  aula TEXT,
+  fechaCreacion TEXT,
+  FOREIGN KEY (materiaId) REFERENCES materias (id) ON DELETE CASCADE,
+  FOREIGN KEY (usuarioId) REFERENCES usuarios (id)
+);
+```
+
+### **Relaciones de Datos Implementadas**
+```
+usuarios (1) ──── (N) materias
+    │                    │
+    └─── (N) notas       └─── (N) notas
+    └─── (N) horarios    └─── (N) horarios
+```
+
+### **Métodos de Servicio SQLite**
+
+#### **DatabaseService**
+- `initializeDatabase()`: Crea tablas automáticamente
+- `query(sql, params)`: Ejecuta consultas SELECT
+- `execute(sql, params)`: Ejecuta INSERT/UPDATE/DELETE
+- `clearAllData()`: Limpia todas las tablas
+- `getDatabaseStats()`: Estadísticas de la base de datos
+
+#### **MateriasService (SQLite)**
+- `getMateriasByUser(userId)`: Materias filtradas por usuario
+- `addMateria(materia)`: Crear nueva materia
+- `updateMateria(id, materia)`: Actualizar materia existente
+- `deleteMateria(id)`: Eliminar materia
+- `getMateriaById(id)`: Obtener materia específica
+
+#### **NotasService (SQLite)**
+- `getNotasByUser(userId)`: Todas las notas del usuario
+- `getNotasByMateria(materiaId)`: Notas de una materia específica
+- `addNota(nota)`: Crear nueva nota
+- `updateNota(id, nota)`: Actualizar nota
+- `deleteNota(id)`: Eliminar nota
+- `getPromedioByMateria(materiaId)`: Calcular promedio
+
+#### **HorariosService (SQLite)**
+- `getHorariosByUser(userId)`: Todos los horarios del usuario
+- `getHorariosByMateria(materiaId)`: Horarios de una materia
+- `getHorariosByDia(diaSemana, userId)`: Horarios por día
+- `addHorario(horario)`: Crear nuevo horario
+- `updateHorario(id, horario)`: Actualizar horario
+- `deleteHorario(id)`: Eliminar horario
+
+### **Arquitectura Híbrida Completa**
+```
+Firebase Auth → Autenticación de usuarios
+     ↓
+Capacitor SQLite → Almacenamiento local offline
+     ↓
+Ionic Services → Lógica de negocio con SQLite
+     ↓
+Ionic Components → Interfaz de usuario moderna
+```
+
+### **Beneficios de la Conversión a SQLite**
+
+#### **Antes (Firebase Firestore)**
+- ❌ Dependencia de conexión a internet
+- ❌ Costos por uso de Firebase
+- ❌ Latencia en consultas
+- ❌ Limitaciones de cuota
+
+#### **Después (SQLite Local)**
+- ✅ **Completamente offline**: Funciona sin internet
+- ✅ **Sin costos**: Base de datos local gratuita
+- ✅ **Velocidad instantánea**: Consultas locales
+- ✅ **Sin límites**: Almacenamiento del dispositivo
+
+### **Funcionalidades Offline**
+- ✅ **Crear, leer, actualizar, eliminar** datos sin conexión
+- ✅ **Sincronización automática** cuando hay conexión
+- ✅ **Datos persistentes** entre sesiones
+- ✅ **Backup automático** en el dispositivo
+
+### **Scripts Útiles para SQLite**
+```bash
+# Verificar estado de la base de datos
+npm run android:run  # Ejecutar y verificar logs
+
+# Limpiar datos de prueba
+adb shell pm clear com.gestionacademica.app
+
+# Ver logs de SQLite
+adb logcat | grep "SQLite\|database"
+```
 
 ## Autor
 LiaRos-ai
