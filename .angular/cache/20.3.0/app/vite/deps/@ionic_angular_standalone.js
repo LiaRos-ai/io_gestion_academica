@@ -1,4 +1,7 @@
 import {
+  startFocusVisible
+} from "./chunk-ZENMADKT.js";
+import {
   isRTL
 } from "./chunk-A4FAK3UG.js";
 import {
@@ -20,9 +23,6 @@ import {
   printIonContentErrorMsg,
   resetContentScrollY
 } from "./chunk-526IYNKQ.js";
-import {
-  startFocusVisible
-} from "./chunk-ZENMADKT.js";
 import {
   AngularDelegate,
   BACKDROP,
@@ -87,7 +87,10 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-RMXKIEDT.js";
+} from "./chunk-VTD7T6SL.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-KQP52NU7.js";
 import {
   shouldUseCloseWatcher
 } from "./chunk-XDEF2ZRY.js";
@@ -96,14 +99,8 @@ import {
   createGesture
 } from "./chunk-C3MYGPQN.js";
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-TDBVUQB3.js";
-import {
   iosTransitionAnimation
-} from "./chunk-QFY6YPQG.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-XXXJWE6H.js";
+} from "./chunk-INGUUMLS.js";
 import {
   LIFECYCLE_DID_LEAVE,
   LIFECYCLE_WILL_LEAVE,
@@ -114,7 +111,7 @@ import {
   setPageHidden,
   transition,
   waitForMount
-} from "./chunk-JMCP4NIP.js";
+} from "./chunk-PJN26GE7.js";
 import {
   Build,
   Fragment,
@@ -158,16 +155,21 @@ import {
   printIonWarning
 } from "./chunk-PE545QUW.js";
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-GWPKNARG.js";
+import {
   ActivatedRoute,
   Router
-} from "./chunk-7LDYWQOH.js";
-import "./chunk-M5D3KPL7.js";
+} from "./chunk-V42IXQZ2.js";
+import "./chunk-OQNWEPAN.js";
+import "./chunk-QCT2UZ65.js";
 import {
   CommonModule,
   Location,
   NgIf,
   NgTemplateOutlet
-} from "./chunk-B44B4QUN.js";
+} from "./chunk-H7YLAJ73.js";
+import "./chunk-NC36ZBW5.js";
 import {
   APP_INITIALIZER,
   Attribute,
@@ -220,11 +222,14 @@ import {
   ɵɵrestoreView,
   ɵɵtemplate,
   ɵɵviewQuery
-} from "./chunk-I4ZMQYFF.js";
+} from "./chunk-7I6MW7PF.js";
+import "./chunk-JVUFNFDF.js";
 import {
-  __decorate,
   fromEvent
-} from "./chunk-JIFDYC5C.js";
+} from "./chunk-IMBXCJCU.js";
+import {
+  __decorate
+} from "./chunk-5Z4ZTMZW.js";
 import {
   __async,
   __name,

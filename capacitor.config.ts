@@ -31,9 +31,24 @@ const config = {
       iconColor: "#488AFF",
       sound: "beep.wav",
     },
+    // Plugin de Google Auth para Calendar API
+    GoogleAuth: {
+      scopes: ['profile', 'email', 'https://www.googleapis.com/auth/calendar/readonly'],
+      serverClientId: '253562087581-ehssj6fasblq3q07d0b2f2op7km7iobf.apps.googleusercontent.com',//'503453066418-qeqoue68i1sk5q597t95r2j0pm6mhmg2.apps.googleusercontent.com',
+      //grantOfflineAccess: true,
+      forceCodeForRefreshToken: true,
+    },
   },
   server: {
     androidScheme: 'https'
+  },
+  android: {
+    buildOptions: {
+      keystorePath: 'C:\\Users\\jqalvarado\\.android\\debug.keystore',
+      keystorePassword: 'android',
+      keystoreKeyAlias: 'androiddebugkey',
+      keystoreKeyPassword: 'android'
+    }
   }
 };
 

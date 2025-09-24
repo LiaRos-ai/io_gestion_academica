@@ -1,0 +1,153 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goToDashboard()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Google Calendar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Google Calendar</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Authentication Section -->
+  <div class="auth-section" *ngIf="!isAuthenticated">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Conectar con Google Calendar</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Conecta tu cuenta de Google para acceder a tu calendario y crear eventos académicos.</p>
+        <ion-button expand="block" (click)="signIn()" [disabled]="loading">
+          <ion-icon slot="start" name="log-in"></ion-icon>
+          Conectar con Google
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Main Content when Authenticated -->
+  <div *ngIf="isAuthenticated">
+    <!-- Header with actions -->
+    <div class="calendar-header">
+      <ion-button fill="outline" (click)="loadEvents()">
+        <ion-icon slot="start" name="refresh"></ion-icon>
+        Actualizar
+      </ion-button>
+      <ion-button fill="outline" color="danger" (click)="signOut()">
+        <ion-icon slot="start" name="log-out"></ion-icon>
+        Desconectar
+      </ion-button>
+    </div>
+
+    <!-- Events List -->
+    <ion-list *ngIf="events.length > 0">
+      <ion-item *ngFor="let event of events">
+        <ion-label>
+          <h2>{{ event.summary }}</h2>
+          <p *ngIf="event.start?.dateTime">{{ formatDate(event.start.dateTime) }}</p>
+          <p *ngIf="event.description">{{ event.description }}</p>
+          <p *ngIf="event.location"><ion-icon name="location"></ion-icon> {{ event.location }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Empty State -->
+    <ion-card *ngIf="events.length === 0 && !loading">
+      <ion-card-content>
+        <p>No hay eventos próximos en tu calendario.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Create Event Modal -->
+    <ion-modal [isOpen]="showCreateModal" (willDismiss)="showCreateModal = false">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Crear Evento</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="showCreateModal = false">Cancelar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <form (ngSubmit)="createEvent()">
+            <ion-list>
+              <ion-item>
+                <ion-input
+                  label="Título del evento"
+                  labelPlacement="stacked"
+                  [(ngModel)]="newEvent.summary"
+                  name="summary"
+                  required>
+                </ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-textarea
+                  label="Descripción"
+                  labelPlacement="stacked"
+                  [(ngModel)]="newEvent.description"
+                  name="description"
+                  placeholder="Descripción opcional">
+                </ion-textarea>
+              </ion-item>
+              <ion-item>
+                <ion-datetime
+                  label="Fecha y hora de inicio"
+                  labelPlacement="stacked"
+                  [(ngModel)]="newEvent.start.dateTime"
+                  name="startDateTime"
+                  displayFormat="DD/MM/YYYY HH:mm"
+                  pickerFormat="DD/MM/YYYY HH:mm"
+                  required>
+                </ion-datetime>
+              </ion-item>
+              <ion-item>
+                <ion-datetime
+                  label="Fecha y hora de fin"
+                  labelPlacement="stacked"
+                  [(ngModel)]="newEvent.end.dateTime"
+                  name="endDateTime"
+                  displayFormat="DD/MM/YYYY HH:mm"
+                  pickerFormat="DD/MM/YYYY HH:mm"
+                  required>
+                </ion-datetime>
+              </ion-item>
+            </ion-list>
+            <div class="modal-actions">
+              <ion-button expand="block" type="submit" [disabled]="loading">
+                <ion-icon slot="start" name="add"></ion-icon>
+                Crear Evento
+              </ion-button>
+            </div>
+          </form>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </div>
+
+  <!-- Loading -->
+  <ion-loading [isOpen]="loading" message="Cargando..."></ion-loading>
+
+  <!-- Toast -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    [color]="toastColor"
+    [duration]="3000"
+    (willDismiss)="onToastDismiss()">
+  </ion-toast>
+
+  <!-- FAB for creating events -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="isAuthenticated">
+    <ion-fab-button (click)="showCreateModal = true">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

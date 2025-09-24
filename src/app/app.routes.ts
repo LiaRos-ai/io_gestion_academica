@@ -29,5 +29,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',
+  },  {
+    path: 'calendar',
+    loadComponent: () => import('./calendar/calendar.page').then( m => m.CalendarPage)
   },
+
 ];

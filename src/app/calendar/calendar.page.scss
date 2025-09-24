@@ -1,0 +1,69 @@
+.auth-section {
+  padding: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  gap: 10px;
+}
+
+.modal-actions {
+  padding: 16px;
+}
+
+ion-item {
+  --border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+ion-card {
+  margin: 16px;
+  --border-radius: 12px;
+}
+
+ion-fab {
+  --background: var(--ion-color-primary);
+}
+
+// Estilos optimizados para ion-datetime
+ion-datetime {
+  --ion-color-base: #ffffff;
+  --ion-text-color: #ffffff;
+  color: #ffffff !important;
+}
+
+// CSS Parts esenciales
+ion-datetime::part(calendar-day) { color: #ffffff !important; }
+ion-datetime::part(calendar-day-active) { background-color: var(--ion-color-primary) !important; }
+ion-datetime::part(calendar-day-today) { color: var(--ion-color-primary) !important; font-weight: bold !important; }
+ion-datetime::part(calendar-day-disabled) { color: #666666 !important; }
+ion-datetime::part(calendar-day-of-week) { color: #cccccc !important; }
+ion-datetime::part(month-year-button), ion-datetime::part(calendar-next-prev), 
+ion-datetime::part(wheel-item), ion-datetime::part(time-button) { color: #ffffff !important; }
+
+// Forzar visibilidad
+ion-datetime *, ion-datetime .calendar-day, ion-datetime .button-native,
+[aria-hidden="true"] ion-datetime *, :host .calendar-day {
+  visibility: visible !important;
+  display: flex !important;
+  opacity: 1 !important;
+  color: #ffffff !important;
+}
+
+// Estilos :host optimizados
+:host .calendar-day {
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 0.875rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:host .calendar-day .button-native {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  color: #ffffff !important;
+}

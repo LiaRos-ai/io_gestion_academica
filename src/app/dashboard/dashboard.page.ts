@@ -79,6 +79,20 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, Io
           </ion-card-content>
         </ion-card>
       </ion-col>
+
+      <ion-col size="12" size-md="6">
+        <ion-card button (click)="irACalendario()">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="calendar-outline" color="warning"></ion-icon>
+              Google Calendar
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Conecta con Google Calendar para gestionar eventos académicos y recordatorios.
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
@@ -136,5 +150,9 @@ export class DashboardPage implements OnInit {
   irAEstadisticas() {
     // Por ahora redirigir a materias, se puede implementar después
     this.router.navigate(['/tabs/materias']);
+  }
+
+  irACalendario() {
+    this.router.navigate(['/calendar']);
   }
 }
